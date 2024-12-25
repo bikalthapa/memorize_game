@@ -25,11 +25,16 @@
       </button>
     </div>
     <div class="p-2 ms-auto">
-      <button class="speaker_btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-volume-mute"
+      <button class="speaker_btn" id="speaker_btn">
+        <svg xmlns="http://www.w3.org/2000/svg" id="mute_btn" width="24" height="24" fill="currentColor" class="bi bi-volume-mute"
           viewBox="0 0 16 16">
           <path
             d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06M6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" id="unmute_btn" width="24" height="24" fill="currentColor" class="d-none bi bi-volume-up" viewBox="0 0 16 16">
+          <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
+          <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
+          <path d="M10.025 8a4.5 4.5 0 0 1-1.318 3.182L8 10.475A3.5 3.5 0 0 0 9.025 8c0-.966-.392-1.841-1.025-2.475l.707-.707A4.5 4.5 0 0 1 10.025 8M7 4a.5.5 0 0 0-.812-.39L3.825 5.5H1.5A.5.5 0 0 0 1 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 7 12zM4.312 6.39 6 5.04v5.92L4.312 9.61A.5.5 0 0 0 4 9.5H2v-3h2a.5.5 0 0 0 .312-.11"/>
         </svg>
       </button>
     </div>
@@ -43,37 +48,8 @@
 
 
     <div class="container">
-      <div class="row game_row-cols-1 game_row-cols-md-3 g-4">
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="level_container">
 
-        <div class="col">
-          <div class="card text-bg-light level_cards" level="1">
-            <img src="https://th.bing.com/th/id/R.3ec155f963d05478b3f67e2ac0a805a8?rik=Q%2bEp9dxS2MVzyg&pid=ImgRaw&r=0"
-              class="card-img" alt="...">
-            <div class="card-img-overlay bg-light bg-opacity-25">
-              <h1 class="card-title">Level 1</h1>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card text-bg-light level_cards" level="2">
-            <img src="https://th.bing.com/th/id/R.3ec155f963d05478b3f67e2ac0a805a8?rik=Q%2bEp9dxS2MVzyg&pid=ImgRaw&r=0"
-              class="card-img" alt="...">
-            <div class="card-img-overlay bg-light bg-opacity-25">
-              <h1 class="card-title">Level 2</h1>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card text-bg-light level_cards" level="3">
-            <img src="https://th.bing.com/th/id/R.3ec155f963d05478b3f67e2ac0a805a8?rik=Q%2bEp9dxS2MVzyg&pid=ImgRaw&r=0"
-              class="card-img" alt="...">
-            <div class="card-img-overlay bg-light bg-opacity-25">
-              <h1 class="card-title">Level 3</h1>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -83,113 +59,9 @@
 
 
 
-  <div class="container d-flex justify-content-center align-items-center d-none" id="game_container">
-    <div class="game_container">
-      <div class="game_row">
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="0" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="1" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="2" />
-            </div>
-          </div>
-        </div>
+  <div class="container d-none" id="game_container">
+      <div class="game_container" id="card_container">
       </div>
-      <div class="game_row">
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="3" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="4" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="5" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="game_row">
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="6" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="7" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="8" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="game_row">
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="9" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="10" />
-            </div>
-          </div>
-        </div>
-        <div class="game_card">
-          <div class="card-inner">
-            <div class="card-front"></div>
-            <div class="card-back">
-              <img src="https://via.placeholder.com/300" img-index="11" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
 
