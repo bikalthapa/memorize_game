@@ -5,7 +5,7 @@
 }
 
 body {
-    background-image: linear-gradient( 90.1deg,  rgba(84, 211, 228, 0.22) 0.2%, rgba(68, 36, 164, 0.294) 99.9% );
+    background-image: linear-gradient(90.1deg, rgba(84, 211, 228, 0.22) 0.2%, rgba(68, 36, 164, 0.294) 99.9%);
 }
 
 /* This is for game navigation */
@@ -20,6 +20,33 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.game_nav .controls{
+    position:fixed;
+    top:0px;
+    z-index:1;
+}
+.controls .indicators{
+    max-width:270px;
+    border-radius:50px;
+    user-select:none;
+    position:relative;
+    border:1px solid rgb(157, 152, 152);
+    background-color: white;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    padding-bottom:5px;
+}
+.indicators p{
+    position:absolute;
+    bottom:-40px;
+    background-color: white;
+    padding:5px 15px 5px 15px;
+    border-radius:30px;
+}
+.indicators .fa{
+    color:rgba(0, 0, 255, 0.579);
+    font-size:20px;
 }
 
 /* This is for homepage */
@@ -48,8 +75,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction:column;
 }
-
 .game_container {
     display: flex;
     flex-direction: column;
@@ -113,4 +140,65 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+
+
+/* Center the button in the middle of the screen */
+.centered-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Take up the full height of the screen */
+}
+
+/* Modal Title Styling */
+.modal-title.success-title {
+    font-weight: bold;
+    color: #ffca28;
+    /* Goldish color */
+}
+
+/* Stars Animation */
+.stars {
+    font-size: 3em;
+    /* Make stars bigger */
+    opacity: 0;
+    /* Start invisible */
+    transform: scale(0);
+    /* Start smaller */
+    transition: opacity 1s, transform 1s;
+    /* Smooth transition for effects */
+}
+
+/* Different star colors */
+/* #star1 {
+    color: brown;
+}
+
+#star2 {
+    color: silver;
+} */
+
+#star3, #star2, #star1{
+    color: gold;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 20px;
+    background-color: #fff8e1;
+    /* Light yellow */
+}
+
+/* Center the buttons in the footer */
+.modal-footer {
+    justify-content: center;
+}
+
+.btn-completed {
+    background-color: #f57c00;
+    /* Orange button color */
+    color: white;
 }
