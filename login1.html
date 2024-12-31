@@ -1,134 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Completed </title>
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome for the star icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-  <style>
-    /* Center the button in the middle of the screen */
-    .centered-button-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh; /* Take up the full height of the screen */
-    }
-
-    /* Modal Title Styling */
-    .modal-title.success-title {
-      font-weight: bold;
-      color: #ffca28; /* Goldish color */
-    }
-
-    /* Stars Animation */
-    .stars {
-      font-size: 3em; /* Make stars bigger */
-      opacity: 0; /* Start invisible */
-      transform: scale(0); /* Start smaller */
-      transition: opacity 1s, transform 1s; /* Smooth transition for effects */
-    }
-
-    /* Different star colors */
-    #star1 { color: brown; }
-    #star2 { color: silver; }
-    #star3 { color: gold; }
-
-    /* Modal styling */
-    .modal-content {
-      border-radius: 20px;
-      background-color: #fff8e1; /* Light yellow */
-    }
-
-    /* Center the buttons in the footer */
-    .modal-footer {
-      justify-content: center;
-    }
-
-    .btn-completed {
-      background-color: #f57c00; /* Orange button color */
-      color: white;
-    }
-
-  </style>
+  <title>Document</title>
 </head>
+
 <body>
-
-  <!-- Button to open the modal -->
-  <div class="centered-button-container">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Game Completed
-    </button>
-  </div>
-
-  <!-- Modal structure -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title success-title" id="exampleModalLabel">Game Completed!</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Stars to appear -->
-          <div class="d-flex justify-content-center">
-            <i class="fas fa-star stars" id="star1"></i>
-            <i class="fas fa-star stars" id="star2"></i>
-            <i class="fas fa-star stars" id="star3"></i>
-          </div>
-          <h4><p class="mt-3">Congratulations! You Win</p></h4> 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-completed" id="playAgainBtn">Play Again</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Quit</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap JS and Popper.js (required for Bootstrap modal) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- jQuery (for convenience) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Sound for each star -->
-  <!-- Update the src to your sound file -->
-  <audio id="audio" src="whooo-105751.mp3" preload="auto"></audio>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <button id="startButton">Start</button>
+  <button id="stopButton">Stop</button>
 
   <script>
-    // Show stars one by one with sound when the modal opens
-    $('#exampleModal').on('shown.bs.modal', function () {
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-      // Function to animate stars with a delay
-      function animateStar(starId, delay) {
-        setTimeout(function() {
-          const star = document.getElementById(starId);
-          star.style.opacity = 1; // Make the star visible
-          star.style.transform = 'scale(1)'; // Make the star grow to normal size
+let character = {
+    x: 50,
+    y: 50,
+    width: 20,
+    height: 40,
+    dx: 2,
+    dy: 0,
+    frameIndex: 0,
+    tickCount: 0,
+    ticksPerFrame: 10,
+    numberOfFrames: 2
+};
 
-          // Play the sound for the star
-          var audio = document.getElementById('audio');
-          audio.volume = 1.0; // Max volume
-          audio.play(); // Play sound
-        }, delay);
-      }
+let animationId;
 
-      // Show stars with delays: First star after 500ms, second after 1500ms, third after 2500ms
-      animateStar('star1', 500); // First star (bronze) after 500ms
-      animateStar('star2', 1500); // Second star (silver) after 1500ms
-      animateStar('star3', 2500); // Third star (gold) after 2500ms
-    });
+function drawCharacter() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // When the "Play Again" button is clicked, show a message
-    document.getElementById('playAgainBtn').addEventListener('click', function() {
-      alert('Congratulations, your victory has been shared!');
-    });
+    // Draw body
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(character.x, character.y, character.width, character.height);
+
+    // Draw arms
+    ctx.fillStyle = 'blue';
+    if (character.frameIndex === 0) {
+        ctx.fillRect(character.x - 10, character.y + 10, 10, 5); // Left arm
+        ctx.fillRect(character.x + character.width, character.y + 10, 10, 5); // Right arm
+    } else {
+        ctx.fillRect(character.x - 10, character.y + 20, 10, 5); // Left arm
+        ctx.fillRect(character.x + character.width, character.y + 20, 10, 5); // Right arm
+    }
+
+    // Draw legs
+    ctx.fillStyle = 'blue';
+    if (character.frameIndex === 0) {
+        ctx.fillRect(character.x, character.y + character.height, 5, 10); // Left leg
+        ctx.fillRect(character.x + character.width - 5, character.y + character.height, 5, 10); // Right leg
+    } else {
+        ctx.fillRect(character.x, character.y + character.height + 10, 5, 10); // Left leg
+        ctx.fillRect(character.x + character.width - 5, character.y + character.height + 10, 5, 10); // Right leg
+    }
+}
+
+function updateCharacter() {
+    character.x += character.dx;
+    character.y += character.dy;
+
+    if (character.x + character.width > canvas.width || character.x < 0) {
+        character.dx *= -1; // Reverse direction on collision with canvas edges
+    }
+
+    character.tickCount += 1;
+
+    if (character.tickCount > character.ticksPerFrame) {
+        character.tickCount = 0;
+        character.frameIndex = (character.frameIndex + 1) % character.numberOfFrames;
+    }
+
+    drawCharacter();
+}
+
+function startAnimation() {
+    animationId = requestAnimationFrame(startAnimation);
+    updateCharacter();
+}
+
+function stopAnimation() {
+    cancelAnimationFrame(animationId);
+}
+
+document.getElementById('startButton').addEventListener('click', startAnimation);
+document.getElementById('stopButton').addEventListener('click', stopAnimation);
+
+drawCharacter(); // Initial draw
+
+
   </script>
-
 </body>
+
 </html>

@@ -1,47 +1,5 @@
 // Array of image file names
 let cardContainer = document.getElementById("card_container");
-const level_data = [
-    {
-        title: "Jurassic",
-        images: ['elephant.png', 'crocodile.png', 'rhino.png', 'hippo.png', 'leopard.png', 'anoconda.png',
-            'elephant.png', 'crocodile.png', 'rhino.png', 'hippo.png', 'leopard.png', 'anoconda.png'],
-        bgMusic: new Audio("sound/level1/background_music.mp3"),
-        isTimeLimit: true,
-        isMovesLimit: true,
-        timeLimit:50,
-        movesLimit:100,
-    },
-    {
-        title: "Level 2",
-        images: ['ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'brook.png', 'fanky.png',
-            'ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'brook.png', 'fanky.png'],
-        bgMusic: new Audio("sound/level2/background_music.mp3"),
-        isTimeLimit: false,
-        isMovesLimit: false,
-        timeLimit:50,
-        movesLimit:20, 
-    },
-    {
-        title: "Level 3",
-        images: ['ghasitaram.png', 'doctor_jhatka.png', 'patlu.png', 'patlu1.png', 'motu1.png', 'motu.png', 'john.png', 'john1.png', 'doctor_jhatka1.png', 'ghasitaram1.png',
-            'ghasitaram.png', 'doctor_jhatka.png', 'patlu.png', 'patlu1.png', 'motu1.png', 'motu.png', 'john.png', 'john1.png', 'doctor_jhatka1.png', 'ghasitaram1.png'],
-        bgMusic: new Audio("sound/level3/background_music.mp3"),
-        isTimeLimit: true,
-        isMovesLimit: true,
-        timeLimit:50,
-        movesLimit:20,
-    },
-    {
-        title: "Level 4",
-        images: ['captain america.jpg', 'dr_strange.jpg', 'hulk.jpg', 'IRON man.png', 'spider man.png', 'wanda.png',
-            'captain america.jpg', 'dr_strange.jpg', 'hulk.jpg', 'IRON man.png', 'spider man.png', 'wanda.png'],
-        bgMusic: new Audio("sound/level3/background_music.mp3"),
-        isTimeLimit: true,
-        isMovesLimit: true,
-        timeLimit:50,
-        movesLimit:20,
-    }
-];
 
 
 let images;
@@ -66,7 +24,7 @@ let time_field = document.getElementById("time_field");
 let moves_field = document.getElementById("moves_field");
 let time_logo = document.getElementById(time_field.getAttribute("descriptor"));
 let moves_logo = document.getElementById(moves_field.getAttribute("descriptor"));
-
+let score_field = document.getElementById("score_field");
 
 let home_btn = document.getElementById("home_btn");
 let speaker_btn = document.getElementById("speaker_btn");
@@ -77,8 +35,80 @@ let currentMode = true;//True for home UI and False for game UI
 
 let selected_level;
 let cardPR = 4;// cards per row
-let totalFlips = 0;
-let score = 0;
+let totalFlips = 0;// This is for calculating the remaining number of cards
+
+let score = 0; // Initial Score is zero
+let passed_time = 0;// initial time to 0 s
+let used_moves = 0;// Initial moves to 0
+
+// This function will format the time
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+function setData(dataType) {
+    if (dataType == "time") {
+        let timeLimit = level_data[selected_level - 1].timeLimit;
+        let remainingTime = timeLimit.value - passed_time;
+        if (timeLimit.permission == true) {// if timelimit is allowed display remaining time
+            time_field.innerHTML = formatTime(remainingTime);
+            if (remainingTime <= 0) {
+                triggerModal("timelimit");
+                stopTimmer();
+            }
+        } else {// If timelimit was not given display the passed time
+            time_field.innerHTML = formatTime(passed_time);
+        }
+    } else if (dataType == "moves") {
+        let movesLimit = level_data[selected_level - 1].movesLimit;
+        let remainingMoves = movesLimit.value - used_moves;
+        if (movesLimit.permission == true) {
+            moves_field.innerHTML = remainingMoves;
+            if (remainingMoves <= 0) {
+                triggerModal("moveslimit");
+                stopTimmer();
+            }
+        } else {
+            moves_field.innerHTML = used_moves;
+        }
+    } else if (dataType == "score") {
+        score_field.innerHTML = score;
+    }
+
+    if (flippedCards == level_data[selected_level - 1].images.length - 1) {
+        triggerModal();
+    }
+
+
+}
+
+function getData(dataType) {
+    if (dataType == "time") {
+        return formatTime(passed_time);
+    } else if (dataType == "moves") {
+        return used_moves;
+    } else if (dataType == "score") {
+        return score;
+    }
+}
+// This is timmer function that runs every second
+let timerInterval;
+
+function startTimmer() {
+    timerInterval = setInterval(() => {
+        passed_time++;
+        setData("time");
+        setData("moves");
+        setData("score");
+    }, 1000);
+}
+
+function stopTimmer() {
+    clearInterval(timerInterval);
+}
+
 
 
 // Function to shuffle the array using Fisher-Yates algorithm
@@ -99,6 +129,7 @@ function shuffleArray(arr) {
         card.setAttribute("is_flipped", "false");
         card.addEventListener("click", () => {
             if (card.getAttribute("is_flipped") == "false") {
+                used_moves++;
                 flipImg(card);
                 flipSound.play();
                 card.setAttribute("is_flipped", "true");
@@ -110,6 +141,7 @@ function shuffleArray(arr) {
                     let previousImg = flippedCards[0].querySelector(".card-back img");
                     let currentImg = flippedCards[1].querySelector(".card-back img");
                     if (previousImg.src == currentImg.src) {// Two cards are matched
+                        score++;
                         flippedCards = [];
                         totalFlips++;
                         matchingSound.play();
@@ -121,23 +153,22 @@ function shuffleArray(arr) {
                 }
             }
             isMovesLeft();
-
         });
     }
 }
 
-function updateControls(){
-    if(level_data[selected_level-1].isTimeLimit==false){
+function updateControls() {
+    if (level_data[selected_level - 1].timeLimit.permission == false) {
         time_logo.classList.add("text-secondary");
-    }else{
-        time_field.innerHTML = level_data[selected_level-1].timeLimit + "s";
+    } else {
+        time_field.innerHTML = level_data[selected_level - 1].timeLimit.value + "s";
         time_logo.classList.remove("text-secondary");
     }
 
-    if(level_data[selected_level-1].isMovesLimit==false){
+    if (level_data[selected_level - 1].movesLimit.permission == false) {
         moves_logo.classList.add("text-secondary");
-    }else{
-        moves_field.innerHTML = level_data[selected_level-1].movesLimit;
+    } else {
+        moves_field.innerHTML = level_data[selected_level - 1].movesLimit.value;
         moves_logo.classList.remove("text-secondary");
     }
 }
@@ -150,9 +181,11 @@ function isMovesLeft() {
     return true;
 }
 
-function resetGame(){
+function resetGame() {
     totalFlips = 0;
-    score = 0;
+    score = 0; // Initial Score is zero
+    passed_time = 0;// initial time to 0 s
+    used_moves = 0;// Initial moves to 0
 }
 function createGameRow(cardContainer, rowIndx) {
     // Create the main row container div
@@ -215,7 +248,7 @@ function createLevelCard(container, level, imgSrc) {
     // Create the card title element
     const cardTitle = document.createElement('h1');
     cardTitle.className = 'card-title';
-    cardTitle.textContent = level_data[level-1].title;
+    cardTitle.textContent = level_data[level - 1].title;
 
     // Append the card title to the card overlay div
     cardOverlayDiv.appendChild(cardTitle);
@@ -233,16 +266,18 @@ function createLevelCard(container, level, imgSrc) {
 
 
 
-function playMusic(musicTyp,status=true) {
+function playMusic(musicTyp, status = true) {
     if (isPlayingAllowed == true) {// Play the music if allowed
-        if (musicTyp == "background" && status==true) {
-            level_data[selected_level].bgMusic.play();
-        }else if(musicTyp=="background" && status==false){
-            level_data[selected_level].bgMusic.pause();
+        if (musicTyp == "background" && status == true) {
+            level_data[selected_level - 1].bgMusic.play();
+            level_data[selected_level - 1].bgMusic.loop = true;
+        } else if (musicTyp == "background" && status == false) {
+            level_data[selected_level - 1].bgMusic.pause();
+            level_data[selected_level - 1].bgMusic.loop = true;
         }
     } else {
         if (musicTyp == "background") {
-            level_data[selected_level].bgMusic.pause(); // Corrected line
+            level_data[selected_level - 1].bgMusic.pause(); // Corrected line
         }
     }
 
@@ -281,10 +316,11 @@ for (let lvl of levels) {
         toggleTab();
         control_container.classList.toggle("d-none");
         updateControls();
-        level_field.innerHTML = level_data[selected_level-1].title;
+        level_field.innerHTML = level_data[selected_level - 1].title;
         images = level_data[selected_level - 1].images;
         shuffleArray(images);
         playMusic("background", true);
+        startTimmer();
     })
 }
 home_btn.addEventListener("click", () => {
@@ -292,13 +328,14 @@ home_btn.addEventListener("click", () => {
         toggleTab();
         control_container.classList.toggle("d-none");
         resetGame();
+        stopTimmer();
     }
-    playMusic("background",false);
+    playMusic("background", false);
 });
-quit_btn.addEventListener("click",()=>{
-    if(currentMode==false){
+quit_btn.addEventListener("click", () => {
+    if (currentMode == false) {
         toggleTab();
-        playMusic("background",false);
+        playMusic("background", false);
         resetGame();
     }
 })
@@ -330,12 +367,50 @@ function animateStar(starId, delay) {
 // Function to trigger the Bootstrap modal
 function triggerModal() {
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    let finalScoreDiv = document.getElementById("finalScore");
+    let finalTimeDiv = document.getElementById("finalTime");
+    let finalMovesDiv = document.getElementById("finalMoves");
+    let nextlvl_btn = document.getElementById("next_level");
+    finalScoreDiv.innerHTML = score;
+    finalTimeDiv.innerHTML = getData("time");
+    finalMovesDiv.innerHTML = getData("moves");
     modal.show();
-
+    let totalScore = level_data[selected_level - 1].images.length / 2;
+    let percentage_complete = (score / totalScore) * 100;
     // Show stars with delays: First star after 500ms, second after 1500ms, third after 2500ms
-    animateStar('star1', 500); // First star (bronze) after 500ms
-    animateStar('star2', 1000); // Second star (silver) after 1500ms
-    animateStar('star3', 1500); // Third star (gold) after 2500ms
+    if (percentage_complete >= 10) {
+        animateStar('star1', 500); // First star (bronze) after 500ms
+    }
+
+    if (percentage_complete > 30) {
+        animateStar('star2', 1000); // Second star (silver) after 1500ms
+    }
+    if (percentage_complete > 60) {
+        animateStar('star3', 1500); // Third star (gold) after 2500ms
+    }
+
+    nextlvl_btn.addEventListener("click", () => {
+        if (selected_level != level_data.length) {
+            resetGame();
+            playMusic("background", false);
+            
+            selected_level++;
+            updateControls();
+            level_field.innerHTML = level_data[selected_level - 1].title;
+            modal.hide();
+            playMusic("background",true);
+            images = level_data[selected_level - 1].images;
+            shuffleArray(images);
+            startTimmer();
+        }else{
+            toggleTab();
+            control_container.classList.toggle("d-none");
+            resetGame();
+            stopTimmer();
+            modal.hide();
+        }
+        playMusic("background",false);
+    })
 };
 
 
