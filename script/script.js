@@ -67,8 +67,8 @@ function setData(dataType) {
         if (movesLimit.permission == true) {
             moves_field.innerHTML = remainingMoves;
             if (remainingMoves <= 0) {
-                triggerModal("moveslimit");
                 stopTimmer();
+                triggerModal("moveslimit");
             }
         } else {
             moves_field.innerHTML = used_moves;
@@ -225,7 +225,7 @@ function createGameRow(cardContainer, rowIndx) {
     cardContainer.appendChild(rowDiv);
 }
 
-function createLevelCard(container, level, imgSrc) {
+function createLevelCard(container, level) {
     // Create the main container div
     const colDiv = document.createElement('div');
     colDiv.className = 'col';
@@ -237,13 +237,13 @@ function createLevelCard(container, level, imgSrc) {
 
     // Create the image element
     const img = document.createElement('img');
-    img.src = imgSrc;
+    img.src = "./image/level"+level+"/"+level_data[level-1].backgroundImage;
     img.className = 'card-img';
     img.alt = '...';
 
     // Create the card overlay div
     const cardOverlayDiv = document.createElement('div');
-    cardOverlayDiv.className = 'card-img-overlay bg-light bg-opacity-75';
+    cardOverlayDiv.className = 'card-img-overlay bg-light bg-opacity-50';
 
     // Create the card title element
     const cardTitle = document.createElement('h1');
@@ -307,7 +307,7 @@ function toggleTab() {
 }
 // generating the levels
 for (let i = 1; i <= level_data.length; i++) {
-    createLevelCard(level_container, i, "image/logo.png");
+    createLevelCard(level_container, i);
 }
 // Event Listener for lavels
 for (let lvl of levels) {
@@ -365,27 +365,34 @@ function animateStar(starId, delay) {
 }
 
 // Function to trigger the Bootstrap modal
-function triggerModal() {
+function triggerModal(reason) {
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
     let finalScoreDiv = document.getElementById("finalScore");
     let finalTimeDiv = document.getElementById("finalTime");
     let finalMovesDiv = document.getElementById("finalMoves");
     let nextlvl_btn = document.getElementById("next_level");
+    let modal_desc = document.getElementById("modal_desc");
+
     finalScoreDiv.innerHTML = score;
     finalTimeDiv.innerHTML = getData("time");
     finalMovesDiv.innerHTML = getData("moves");
+    if(reason=="timelimit"){
+        modal_desc.innerHTML = "Time Limit Exceeded!";
+    }else if(reason=="moveslimit"){
+        modal_desc.innerHTML = "Moves Limit Exceeded!";
+    }
     modal.show();
     let totalScore = level_data[selected_level - 1].images.length / 2;
     let percentage_complete = (score / totalScore) * 100;
     // Show stars with delays: First star after 500ms, second after 1500ms, third after 2500ms
-    if (percentage_complete >= 10) {
+    if (percentage_complete >= 70) {
         animateStar('star1', 500); // First star (bronze) after 500ms
     }
 
-    if (percentage_complete > 30) {
+    if (percentage_complete > 80) {
         animateStar('star2', 1000); // Second star (silver) after 1500ms
     }
-    if (percentage_complete > 60) {
+    if (percentage_complete > 90) {
         animateStar('star3', 1500); // Third star (gold) after 2500ms
     }
 
