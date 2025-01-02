@@ -10,12 +10,12 @@ const level_data = [
     },
     {
         title: "Level 2",
-        images: ['ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'brook.png', 'fanky.png',
-            'ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'brook.png', 'fanky.png'],
+        images: ['ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'luffy.png', 'fanky.png',
+            'ace.png', 'agatsuma.png', 'brook.png', 'chopper.png', 'nezuko.png', 'nami.png', 'luffy.png', 'fanky.png'],
         bgMusic: new Audio("sound/level2/background_music.mp3"),
         backgroundImage: "background_image.jpg",
         timeLimit: { permission: false, value: 120 },
-        movesLimit: { permission: true, value: 25 }
+        movesLimit: { permission: true, value:  30}
     },
     {
         title: "Level 3",
@@ -30,7 +30,7 @@ const level_data = [
         title: "Level 4",
         images: ['captain america.jpg', 'dr_strange.jpg', 'hulk.jpg', 'IRON man.png', 'spider man.png', 'wanda.png',
             'captain america.jpg', 'dr_strange.jpg', 'hulk.jpg', 'IRON man.png', 'spider man.png', 'wanda.png'],
-        bgMusic: new Audio("sound/level3/background_music.mp3"),
+        bgMusic: new Audio("sound/level4/background_music.mp3"),
         backgroundImage: "background_image.jpg",
         timeLimit: { permission: true, value: 120 },
         movesLimit: { permission: true, value: 25 }

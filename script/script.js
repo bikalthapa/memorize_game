@@ -8,6 +8,7 @@ let isPlayingAllowed = true;
 const flipSound = new Audio("sound/page_flip.mp3");
 const matchingSound = new Audio("sound/winning.wav");
 const coinCollect = new Audio("sound/coin_collection.wav");
+const gameOver = new Audio("sound/game losee.mp3");
 
 
 
@@ -237,7 +238,7 @@ function createLevelCard(container, level) {
 
     // Create the image element
     const img = document.createElement('img');
-    img.src = "./image/level"+level+"/"+level_data[level-1].backgroundImage;
+    img.src = "./image/level" + level + "/" + level_data[level - 1].backgroundImage;
     img.className = 'card-img';
     img.alt = '...';
 
@@ -285,6 +286,11 @@ function playMusic(musicTyp, status = true) {
         coinCollect.currentTime = 0;
         coinCollect.play();
     }
+
+    if (musicTyp == "gameOver") {
+        gameOver.play();
+    }
+
 }
 
 
@@ -376,14 +382,18 @@ function triggerModal(reason) {
     finalScoreDiv.innerHTML = score;
     finalTimeDiv.innerHTML = getData("time");
     finalMovesDiv.innerHTML = getData("moves");
-    if(reason=="timelimit"){
+    if (reason == "timelimit") {
         modal_desc.innerHTML = "Time Limit Exceeded!";
-    }else if(reason=="moveslimit"){
+    } else if (reason == "moveslimit") {
         modal_desc.innerHTML = "Moves Limit Exceeded!";
     }
     modal.show();
     let totalScore = level_data[selected_level - 1].images.length / 2;
     let percentage_complete = (score / totalScore) * 100;
+    if (percentage_complete < 70) {
+        playMusic("background", false);
+        playMusic("gameOver");
+    }
     // Show stars with delays: First star after 500ms, second after 1500ms, third after 2500ms
     if (percentage_complete >= 70) {
         animateStar('star1', 500); // First star (bronze) after 500ms
@@ -398,26 +408,26 @@ function triggerModal(reason) {
 
     nextlvl_btn.addEventListener("click", () => {
         if (selected_level != level_data.length) {
-            resetGame();
-            playMusic("background", false);
-            
-            selected_level++;
-            updateControls();
-            level_field.innerHTML = level_data[selected_level - 1].title;
-            modal.hide();
-            playMusic("background",true);
-            images = level_data[selected_level - 1].images;
-            shuffleArray(images);
-            startTimmer();
-        }else{
+            if (percentage_complete > 90 || true == true) {
+                resetGame();
+                selected_level++;
+                playMusic("background", true); // Move this line here
+                updateControls();
+                level_field.innerHTML = level_data[selected_level - 1].title;
+                modal.hide();
+                images = level_data[selected_level - 1].images;
+                shuffleArray(images);
+                startTimmer();
+            }
+        } else {
             toggleTab();
             control_container.classList.toggle("d-none");
             resetGame();
             stopTimmer();
             modal.hide();
         }
-        playMusic("background",false);
-    })
+    });
+    
 };
 
 
