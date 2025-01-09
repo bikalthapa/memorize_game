@@ -26,6 +26,7 @@ let moves_field = document.getElementById("moves_field");
 let time_logo = document.getElementById(time_field.getAttribute("descriptor"));
 let moves_logo = document.getElementById(moves_field.getAttribute("descriptor"));
 let score_field = document.getElementById("score_field");
+let modalTitle = document.getElementById("modalTitle");
 
 let home_btn = document.getElementById("home_btn");
 let speaker_btn = document.getElementById("speaker_btn");
@@ -56,8 +57,8 @@ function setData(dataType) {
         if (timeLimit.permission == true) {// if timelimit is allowed display remaining time
             time_field.innerHTML = formatTime(remainingTime);
             if (remainingTime <= 0) {
-                triggerModal("timelimit");
                 stopTimmer();
+                triggerModal("timelimit");
             }
         } else {// If timelimit was not given display the passed time
             time_field.innerHTML = formatTime(passed_time);
@@ -187,11 +188,19 @@ function resetGame() {
     score = 0; // Initial Score is zero
     passed_time = 0;// initial time to 0 s
     used_moves = 0;// Initial moves to 0
+    hideStar('star1');
+    hideStar('star2');
+    hideStar('star3');
 }
 function createGameRow(cardContainer, rowIndx) {
     // Create the main row container div
     const rowDiv = document.createElement("row");
     rowDiv.className = "game_row";
+    if (selected_level == 4) {
+        cardPR = 6;
+    }else{
+        cardPR = 4;
+    }
     for (let j = 0; j < cardPR; j++) {
 
 
@@ -370,8 +379,17 @@ function animateStar(starId, delay) {
     }, delay);
 }
 
+// Function to hide the start
+function hideStar(starId) {
+    const star = document.getElementById(starId);
+    star.style.opacity = 0; // Make the star invisible
+    star.style.transform = 'scale(0)'; // Make the star shrink to zero size
+}
+
+
 // Function to trigger the Bootstrap modal
 function triggerModal(reason) {
+    stopTimmer();
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
     let finalScoreDiv = document.getElementById("finalScore");
     let finalTimeDiv = document.getElementById("finalTime");
@@ -383,17 +401,19 @@ function triggerModal(reason) {
     finalTimeDiv.innerHTML = getData("time");
     finalMovesDiv.innerHTML = getData("moves");
     if (reason == "timelimit") {
+        modalTitle.innerHTML = "Game Over";
         modal_desc.innerHTML = "Time Limit Exceeded!";
     } else if (reason == "moveslimit") {
+        modalTitle.innerHTML = "Game Over";
         modal_desc.innerHTML = "Moves Limit Exceeded!";
     }
     modal.show();
     let totalScore = level_data[selected_level - 1].images.length / 2;
     let percentage_complete = (score / totalScore) * 100;
     if (percentage_complete < 70) {
-        playMusic("background", false);
         playMusic("gameOver");
     }
+    playMusic("background", false);
     // Show stars with delays: First star after 500ms, second after 1500ms, third after 2500ms
     if (percentage_complete >= 70) {
         animateStar('star1', 500); // First star (bronze) after 500ms
@@ -403,21 +423,36 @@ function triggerModal(reason) {
         animateStar('star2', 1000); // Second star (silver) after 1500ms
     }
     if (percentage_complete > 90) {
+        modalTitle.innerHTML = "Level Completed";
         animateStar('star3', 1500); // Third star (gold) after 2500ms
     }
 
     nextlvl_btn.addEventListener("click", () => {
-        if (selected_level != level_data.length) {
-            if (percentage_complete > 90 || true == true) {
+        if (selected_level != level_data.length) {// You can move to the next level if the next level is initialized
+            if (percentage_complete > 90) {// You can move to the next level only if you complete the previous one
                 resetGame();
                 selected_level++;
-                playMusic("background", true); // Move this line here
+
+                // Pause the current level's background music
+                if (level_data[selected_level - 2] && level_data[selected_level - 2].bgMusic) {
+                    level_data[selected_level - 2].bgMusic.pause();  // Stop previous level's music
+                }
+
+                // Play the new level's background music
+                playMusic("background", true);
+
                 updateControls();
                 level_field.innerHTML = level_data[selected_level - 1].title;
                 modal.hide();
                 images = level_data[selected_level - 1].images;
                 shuffleArray(images);
                 startTimmer();
+            }else{
+                toggleTab();
+                control_container.classList.toggle("d-none");
+                resetGame();
+                stopTimmer();
+                modal.hide();         
             }
         } else {
             toggleTab();
@@ -427,7 +462,9 @@ function triggerModal(reason) {
             modal.hide();
         }
     });
-    
+
+
+
 };
 
 
